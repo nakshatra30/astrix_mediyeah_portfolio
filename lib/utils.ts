@@ -37,10 +37,29 @@ export function parseLines(value: string | null | undefined) {
     .filter(Boolean);
 }
 
+export function getSiteUrl() {
+  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  const vercelHost =
+    process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim() ??
+    process.env.VERCEL_URL?.trim();
+  const fallback = vercelHost
+    ? `https://${vercelHost.replace(/^https?:\/\//, "")}`
+    : "http://localhost:3000";
+
+  if (!configured) return fallback;
+
+  try {
+    const url = new URL(
+      configured.includes("://") ? configured : `https://${configured}`,
+    );
+    return url.origin;
+  } catch {
+    return fallback;
+  }
+}
+
 export function absoluteUrl(path = "") {
-  const base =
-    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ??
-    "http://localhost:3000";
+  const base = getSiteUrl();
   return `${base}${path.startsWith("/") ? path : `/${path}`}`;
 }
 

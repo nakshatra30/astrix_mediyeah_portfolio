@@ -1,4 +1,4 @@
-export type PublicService = {
+export type Service = {
   id: string;
   title: string;
   slug: string;
@@ -6,13 +6,13 @@ export type PublicService = {
   description: string;
   icon: string;
   features: string[];
-  imageUrl: string | null;
+  image: string | null;
   price: string | null;
   featured: boolean;
   order: number;
 };
 
-export type PublicProject = {
+export type Project = {
   id: string;
   title: string;
   slug: string;
@@ -20,8 +20,11 @@ export type PublicProject = {
   category: string;
   summary: string;
   description: string;
-  imageUrl: string | null;
+  coverImage: string;
   gallery: string[];
+  videoUrl: string | null;
+  videoThumbnail: string | null;
+  instagramReelUrl: string | null;
   results: string[];
   liveUrl: string | null;
   year: number | null;
@@ -30,7 +33,7 @@ export type PublicProject = {
   service: { title: string; slug: string } | null;
 };
 
-export type PublicTestimonial = {
+export type Testimonial = {
   id: string;
   clientName: string;
   clientRole: string;

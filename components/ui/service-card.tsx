@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { ServiceIcon } from "@/components/ui/service-icon";
-import type { PublicService } from "@/types/content";
+import type { Service } from "@/types/content";
 import { cn } from "@/lib/utils";
 
 export function ServiceCard({
@@ -9,7 +9,7 @@ export function ServiceCard({
   index = 0,
   className,
 }: {
-  service: PublicService;
+  service: Service;
   index?: number;
   className?: string;
 }) {

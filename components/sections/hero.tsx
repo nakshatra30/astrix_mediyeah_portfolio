@@ -1,26 +1,16 @@
 "use client";
 
+import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight, Play, TrendingUp, Zap } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Counter } from "@/components/ui/counter";
-
-type HeroSettings = {
-  badge: string;
-  title: string;
-  highlight: string;
-  description: string;
-  primaryCta: string;
-  secondaryCta: string;
-  projects: number;
-  clients: number;
-  satisfaction: number;
-};
+import { hero, stats } from "@/data/site";
 
 const bars = [34, 48, 41, 62, 55, 74, 68, 88, 82, 96];
 
-export function Hero({ settings }: { settings: HeroSettings }) {
+export function Hero() {
   const reduce = useReducedMotion();
 
   const item = {
@@ -34,6 +24,17 @@ export function Hero({ settings }: { settings: HeroSettings }) {
 
   return (
     <section className="relative overflow-hidden pb-20 pt-32 sm:pt-36 lg:min-h-dvh lg:pb-24 lg:pt-40">
+      <div className="absolute inset-0 -z-10" aria-hidden="true">
+        <Image
+          src={hero.image}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center opacity-25"
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,5,9,0.55),rgba(5,5,9,0.9)_55%,#050509)]" />
+      </div>
       <div
         className="pointer-events-none absolute -left-40 top-24 h-[420px] w-[420px] rounded-full bg-neon/15 blur-[120px]"
         aria-hidden="true"
@@ -59,7 +60,7 @@ export function Hero({ settings }: { settings: HeroSettings }) {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
                 <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
               </span>
-              {settings.badge}
+              {hero.badge}
             </span>
           </motion.div>
 
@@ -67,15 +68,15 @@ export function Hero({ settings }: { settings: HeroSettings }) {
             variants={item}
             className="mt-7 text-balance text-[2.65rem] font-semibold leading-[1.02] sm:text-6xl lg:text-[4.35rem] lg:leading-[0.98]"
           >
-            {settings.title}
-            <span className="mt-2 block gradient-text">{settings.highlight}</span>
+            {hero.title}
+            <span className="mt-2 block gradient-text">{hero.highlight}</span>
           </motion.h1>
 
           <motion.p
             variants={item}
             className="mt-7 max-w-xl text-pretty text-[15px] leading-relaxed text-zinc-400 sm:text-[17px]"
           >
-            {settings.description}
+            {hero.description}
           </motion.p>
 
           <motion.div
@@ -83,12 +84,12 @@ export function Hero({ settings }: { settings: HeroSettings }) {
             className="mt-9 flex flex-wrap items-center gap-3"
           >
             <ButtonLink href="/contact" size="lg" className="group">
-              {settings.primaryCta}
+              {hero.primaryCta}
               <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </ButtonLink>
             <ButtonLink href="/projects" size="lg" variant="secondary" className="group">
               <Play className="h-3.5 w-3.5 fill-current" />
-              {settings.secondaryCta}
+              {hero.secondaryCta}
             </ButtonLink>
           </motion.div>
 
@@ -98,7 +99,7 @@ export function Hero({ settings }: { settings: HeroSettings }) {
           >
             <div>
               <p className="font-display text-2xl font-semibold text-white">
-                <Counter value={settings.projects} suffix="+" />
+                <Counter value={stats.projects} suffix="+" />
               </p>
               <p className="mt-1 text-[11px] uppercase tracking-[0.18em] text-zinc-600">
                 Projects shipped
@@ -107,7 +108,7 @@ export function Hero({ settings }: { settings: HeroSettings }) {
             <div className="h-10 w-px bg-white/10" />
             <div>
               <p className="font-display text-2xl font-semibold text-white">
-                <Counter value={settings.clients} suffix="+" />
+                <Counter value={stats.clients} suffix="+" />
               </p>
               <p className="mt-1 text-[11px] uppercase tracking-[0.18em] text-zinc-600">
                 Brands partnered
@@ -116,7 +117,7 @@ export function Hero({ settings }: { settings: HeroSettings }) {
             <div className="h-10 w-px bg-white/10" />
             <div>
               <p className="font-display text-2xl font-semibold text-white">
-                <Counter value={settings.satisfaction} suffix="%" />
+                <Counter value={stats.satisfaction} suffix="%" />
               </p>
               <p className="mt-1 text-[11px] uppercase tracking-[0.18em] text-zinc-600">
                 Client satisfaction

@@ -4,7 +4,7 @@ import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { ServiceCard } from "@/components/ui/service-card";
 import { RevealGroup, RevealItem } from "@/components/ui/reveal";
-import type { PublicService } from "@/types/content";
+import type { Service } from "@/types/content";
 
 export function ServicesOverview({
   services,
@@ -13,7 +13,7 @@ export function ServicesOverview({
   description = "No handoffs between strategists, designers and engineers. Every capability is built to compound the others.",
   showLink = true,
 }: {
-  services: PublicService[];
+  services: Service[];
   eyebrow?: string;
   title?: string;
   description?: string;

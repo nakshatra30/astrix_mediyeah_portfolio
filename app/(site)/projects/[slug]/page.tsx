@@ -9,36 +9,47 @@ import { Cover } from "@/components/ui/cover";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { ProjectCard } from "@/components/ui/project-card";
 import { Reveal } from "@/components/ui/reveal";
+import { ResponsiveVideo } from "@/components/media/responsive-video";
+import { InstagramReel } from "@/components/media/instagram-reel";
 import { CTASection } from "@/components/sections/cta";
-import { getPublicProjectBySlug, getPublicProjects } from "@/lib/queries";
-import { getSiteSettings } from "@/lib/settings";
+import {
+  PROJECTS,
+  getProjectBySlug,
+  getRelatedProjects,
+} from "@/data/projects";
 
-export const dynamic = "force-dynamic";
+export const dynamicParams = false;
 
 type PageProps = { params: Promise<{ slug: string }> };
 
+export function generateStaticParams() {
+  return PROJECTS.map((project) => ({ slug: project.slug }));
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const project = await getPublicProjectBySlug(slug);
+  const project = getProjectBySlug(slug);
   if (!project) return { title: "Project not found" };
   return {
     title: `${project.title} — ${project.client}`,
     description: project.summary,
     alternates: { canonical: `/projects/${project.slug}` },
+    openGraph: {
+      title: `${project.title} — ${project.client}`,
+      description: project.summary,
+      images: [{ url: project.coverImage }],
+    },
   };
 }
 
 export default async function ProjectDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const [project, settings] = await Promise.all([
-    getPublicProjectBySlug(slug),
-    getSiteSettings(),
-  ]);
+  const project = getProjectBySlug(slug);
 
   if (!project) notFound();
 
-  const recent = await getPublicProjects({ limit: 4 });
-  const related = recent.filter((item) => item.id !== project.id).slice(0, 3);
+  const related = getRelatedProjects(project);
+  const hasMotion = Boolean(project.videoUrl || project.instagramReelUrl);
 
   return (
     <>
@@ -80,9 +91,11 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       <Container>
         <Reveal>
           <Cover
-            src={project.imageUrl}
+            src={project.coverImage}
             alt={`${project.title} — ${project.client}`}
             className="aspect-[16/10] w-full rounded-3xl border border-white/10 sm:aspect-[16/8]"
+            priority
+            sizes="100vw"
           />
         </Reveal>
 
@@ -176,9 +189,33 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                     src={image}
                     alt={`${project.title} visual ${index + 1}`}
                     className="aspect-[4/3] w-full rounded-2xl border border-white/10"
+                    sizes="(min-width: 640px) 50vw, 100vw"
                   />
                 </Reveal>
               ))}
+            </div>
+          </section>
+        ) : null}
+
+        {hasMotion ? (
+          <section className="mt-16">
+            <h2 className="text-2xl font-semibold text-white sm:text-3xl">
+              Motion
+            </h2>
+            <div className="mt-6 grid items-start gap-5 lg:grid-cols-2">
+              {project.videoUrl ? (
+                <ResponsiveVideo
+                  src={project.videoUrl}
+                  poster={project.videoThumbnail ?? project.coverImage}
+                  title={`${project.title} — project video`}
+                />
+              ) : null}
+              {project.instagramReelUrl ? (
+                <InstagramReel
+                  url={project.instagramReelUrl}
+                  title={project.title}
+                />
+              ) : null}
             </div>
           </section>
         ) : null}
@@ -211,7 +248,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         </ButtonLink>
       </div>
 
-      <CTASection email={settings["contact.email"]} />
+      <CTASection />
     </>
   );
 }

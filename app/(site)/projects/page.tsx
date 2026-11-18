@@ -3,10 +3,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Container } from "@/components/ui/container";
 import { ProjectsGrid } from "@/components/sections/projects-grid";
 import { CTASection } from "@/components/sections/cta";
-import { getPublicProjectCategories, getPublicProjects } from "@/lib/queries";
-import { getSiteSettings } from "@/lib/settings";
-
-export const dynamic = "force-dynamic";
+import { PROJECTS, PROJECT_CATEGORIES } from "@/data/projects";
 
 export const metadata: Metadata = {
   title: "Portfolio",
@@ -15,13 +12,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/projects" },
 };
 
-export default async function ProjectsPage() {
-  const [projects, categories, settings] = await Promise.all([
-    getPublicProjects(),
-    getPublicProjectCategories(),
-    getSiteSettings(),
-  ]);
-
+export default function ProjectsPage() {
   return (
     <>
       <PageHeader
@@ -37,12 +28,11 @@ export default async function ProjectsPage() {
       />
 
       <Container>
-        <ProjectsGrid projects={projects} categories={categories} />
+        <ProjectsGrid projects={PROJECTS} categories={PROJECT_CATEGORIES} />
       </Container>
 
       <div className="mt-10">
         <CTASection
-          email={settings["contact.email"]}
           title="Your project could be next."
           description="Tell us what you're building. We'll show you exactly how we'd approach it — and what we think it takes to win."
         />

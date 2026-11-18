@@ -7,10 +7,7 @@ import { RevealGroup, RevealItem } from "@/components/ui/reveal";
 import { ServicesOverview } from "@/components/sections/services-overview";
 import { ProcessSection } from "@/components/sections/process-section";
 import { CTASection } from "@/components/sections/cta";
-import { getPublicServices } from "@/lib/queries";
-import { getSiteSettings } from "@/lib/settings";
-
-export const dynamic = "force-dynamic";
+import { SERVICES } from "@/data/services";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -43,12 +40,7 @@ const engagements = [
   },
 ];
 
-export default async function ServicesPage() {
-  const [services, settings] = await Promise.all([
-    getPublicServices(),
-    getSiteSettings(),
-  ]);
-
+export default function ServicesPage() {
   return (
     <>
       <PageHeader
@@ -64,7 +56,7 @@ export default async function ServicesPage() {
       />
 
       <ServicesOverview
-        services={services}
+        services={SERVICES}
         eyebrow="Disciplines"
         title="Where we do our best work"
         description="Every service is delivered by the same core team, so strategy, design and engineering never contradict each other."
@@ -106,13 +98,9 @@ export default async function ServicesPage() {
         </Container>
       </section>
 
-      <ProcessSection
-        title={settings["process.title"]}
-        subtitle={settings["process.subtitle"]}
-      />
+      <ProcessSection />
 
       <CTASection
-        email={settings["contact.email"]}
         title="Not sure what you need yet?"
         description="That's normal. Book a 30-minute call and we'll diagnose the real bottleneck before recommending any service."
       />

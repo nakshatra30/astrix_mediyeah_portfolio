@@ -5,7 +5,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import type { MouseEvent } from "react";
 import { Cover } from "@/components/ui/cover";
-import type { PublicProject } from "@/types/content";
+import type { Project } from "@/types/content";
 import { cn } from "@/lib/utils";
 
 export function ProjectCard({
@@ -13,7 +13,7 @@ export function ProjectCard({
   index = 0,
   className,
 }: {
-  project: PublicProject;
+  project: Project;
   index?: number;
   className?: string;
 }) {
@@ -45,9 +45,10 @@ export function ProjectCard({
       <Link href={`/projects/${project.slug}`} className="block">
         <div className="relative overflow-hidden">
           <Cover
-            src={project.imageUrl}
+            src={project.coverImage}
             alt={`${project.title} — ${project.category} project`}
             className="aspect-[4/3] w-full transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+            sizes="(min-width: 1024px) 50vw, 100vw"
           >
             <div className="absolute inset-x-0 top-0 flex items-center justify-between p-5">
               <span className="rounded-full border border-white/20 bg-black/40 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.18em] text-white/90 backdrop-blur">

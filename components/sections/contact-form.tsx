@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, Loader2, Send } from "lucide-react";
+import { CheckCircle2, Mail, MessageCircle, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Field, Input, Select, Textarea } from "@/components/ui/input";
-import { BUDGET_OPTIONS, SERVICE_OPTIONS } from "@/lib/constants";
-import type { ApiResponse } from "@/types";
+import { BUDGET_OPTIONS } from "@/lib/constants";
+import { contact } from "@/data/contact";
 
 type FormState = {
   name: string;
@@ -27,11 +27,12 @@ const initialState: FormState = {
   message: "",
 };
 
-export function ContactForm({ services = SERVICE_OPTIONS }: { services?: string[] }) {
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+export function ContactForm({ services }: { services: string[] }) {
   const [form, setForm] = useState<FormState>(initialState);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
-  const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
-  const [message, setMessage] = useState<string | null>(null);
+  const [mailtoUrl, setMailtoUrl] = useState<string | null>(null);
 
   const update = (field: keyof FormState, value: string) => {
     setForm((current) => ({ ...current, [field]: value }));
@@ -44,58 +45,84 @@ export function ContactForm({ services = SERVICE_OPTIONS }: { services?: string[
     }
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setStatus("loading");
-    setMessage(null);
-    setErrors({});
-
-    try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      const payload = (await response.json()) as ApiResponse<{ id: string }>;
-
-      if (!response.ok || !payload.success) {
-        if (!payload.success) {
-          const details = payload.error.details as
-            | Record<string, string[]>
-            | undefined;
-          if (details) setErrors(details);
-          setMessage(payload.error.message);
-        }
-        setStatus("idle");
-        return;
-      }
-
-      setStatus("success");
-      setForm(initialState);
-    } catch {
-      setMessage("Network error. Please try again.");
-      setStatus("idle");
+  const validate = () => {
+    const next: Record<string, string[]> = {};
+    if (!form.name.trim()) next.name = ["Please add your name."];
+    if (!form.email.trim()) {
+      next.email = ["Please add your email address."];
+    } else if (!emailPattern.test(form.email.trim())) {
+      next.email = ["Please enter a valid email address."];
     }
+    if (!form.message.trim()) next.message = ["Tell us a little about the project."];
+    return next;
   };
 
-  if (status === "success") {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const nextErrors = validate();
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length) return;
+
+    const lines = [
+      `Name: ${form.name.trim()}`,
+      `Email: ${form.email.trim()}`,
+      form.phone.trim() ? `Phone: ${form.phone.trim()}` : null,
+      form.company.trim() ? `Company: ${form.company.trim()}` : null,
+      form.service ? `Service: ${form.service}` : null,
+      form.budget ? `Budget: ${form.budget}` : null,
+      "",
+      "Project details:",
+      form.message.trim(),
+    ].filter((line): line is string => line !== null);
+
+    const url = `mailto:${contact.email}?subject=${encodeURIComponent(
+      `Project enquiry — ${form.name.trim()}`,
+    )}&body=${encodeURIComponent(lines.join("\n"))}`;
+
+    setMailtoUrl(url);
+    window.location.href = url;
+  };
+
+  if (mailtoUrl) {
     return (
       <div className="glass-card flex flex-col items-center gap-4 p-10 text-center">
         <span className="flex h-14 w-14 items-center justify-center rounded-full border border-emerald-400/30 bg-emerald-400/10 text-emerald-300">
           <CheckCircle2 className="h-6 w-6" />
         </span>
-        <h3 className="text-xl font-semibold text-white">Enquiry received</h3>
+        <h3 className="text-xl font-semibold text-white">Your email draft is ready</h3>
         <p className="max-w-sm text-sm leading-relaxed text-zinc-400">
-          Thanks for reaching out. We review every enquiry personally and will
-          reply within one working day.
+          Your email app should have opened with the enquiry filled in. Send it
+          and we&apos;ll reply within one working day. Nothing is stored on this
+          site.
         </p>
+        <div className="mt-2 flex flex-col gap-3 sm:flex-row">
+          <a
+            href={mailtoUrl}
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-white px-5 text-sm font-semibold text-ink transition-opacity hover:opacity-90"
+          >
+            <Mail className="h-4 w-4" />
+            Open email app
+          </a>
+          <a
+            href={contact.whatsappHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-white/12 px-5 text-sm text-zinc-300 transition-colors hover:border-white/25 hover:text-white"
+          >
+            <MessageCircle className="h-4 w-4" />
+            WhatsApp instead
+          </a>
+        </div>
         <Button
           variant="secondary"
           size="sm"
-          onClick={() => setStatus("idle")}
+          onClick={() => {
+            setMailtoUrl(null);
+            setForm(initialState);
+          }}
           className="mt-2"
         >
-          Send another enquiry
+          Write another enquiry
         </Button>
       </div>
     );
@@ -110,7 +137,8 @@ export function ContactForm({ services = SERVICE_OPTIONS }: { services?: string[
       <div className="mb-1">
         <h2 className="text-xl font-semibold text-white">Tell us about the project</h2>
         <p className="mt-1.5 text-sm text-zinc-500">
-          A few details is all we need to start. Fields marked * are required.
+          This form opens your email app with everything filled in. Fields marked
+          * are required.
         </p>
       </div>
 
@@ -204,45 +232,26 @@ export function ContactForm({ services = SERVICE_OPTIONS }: { services?: string[
         />
       </Field>
 
-      <input
-        type="text"
-        name="website"
-        tabIndex={-1}
-        autoComplete="off"
-        aria-hidden="true"
-        className="absolute left-[-9999px] h-0 w-0 opacity-0"
-      />
-
-      {message ? (
-        <p className="rounded-xl border border-red-500/20 bg-red-500/[0.07] px-4 py-3 text-sm text-red-300">
-          {message}
-        </p>
-      ) : null}
-
       <div className="mt-1 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-[11px] leading-relaxed text-zinc-600">
           By submitting, you agree to be contacted about your enquiry. We never
           share your details.
         </p>
-        <Button
-          type="submit"
-          size="lg"
-          disabled={status === "loading"}
-          className="shrink-0"
-        >
-          {status === "loading" ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Sending
-            </>
-          ) : (
-            <>
-              Send enquiry
-              <Send className="h-4 w-4" />
-            </>
-          )}
+        <Button type="submit" size="lg" className="shrink-0">
+          Compose enquiry
+          <Send className="h-4 w-4" />
         </Button>
       </div>
+
+      <a
+        href={contact.whatsappHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center justify-center gap-2 text-xs text-zinc-500 transition-colors hover:text-white"
+      >
+        <MessageCircle className="h-3.5 w-3.5" />
+        Prefer WhatsApp? Message us directly
+      </a>
     </form>
   );
 }

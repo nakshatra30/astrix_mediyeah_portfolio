@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Sora } from "next/font/google";
 import "./globals.css";
+import { seo, site } from "@/data/site";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -22,36 +23,27 @@ const siteUrl =
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Astrix Mediyeah — Premium Digital Agency",
-    template: "%s · Astrix Mediyeah",
+    default: seo.title,
+    template: `%s · ${site.name}`,
   },
-  description:
-    "Astrix Mediyeah is a premium digital agency delivering branding, web development, SEO, social media and content for ambitious brands.",
-  keywords: [
-    "digital agency",
-    "branding agency",
-    "web development",
-    "SEO",
-    "social media management",
-    "content creation",
-    "Astrix Mediyeah",
-  ],
-  authors: [{ name: "Astrix Mediyeah" }],
-  creator: "Astrix Mediyeah",
+  description: seo.description,
+  keywords: [...seo.keywords],
+  authors: [{ name: site.name }],
+  creator: site.name,
   openGraph: {
     type: "website",
     locale: "en_US",
     url: siteUrl,
-    siteName: "Astrix Mediyeah",
-    title: "Astrix Mediyeah — Premium Digital Agency",
-    description:
-      "Strategy, design and engineering fused into one senior team. Brands, websites and growth systems that make your market stop scrolling.",
+    siteName: site.name,
+    title: seo.title,
+    description: seo.description,
+    images: [{ url: seo.image, width: 1800, height: 1200, alt: site.name }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Astrix Mediyeah — Premium Digital Agency",
-    description:
-      "Strategy, design and engineering fused into one senior team. Brands, websites and growth systems built for ambitious companies.",
+    title: seo.title,
+    description: seo.description,
+    images: [seo.image],
   },
   robots: {
     index: true,

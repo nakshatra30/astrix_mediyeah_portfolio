@@ -7,9 +7,8 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
 import { StatsBand } from "@/components/sections/stats-band";
 import { CTASection } from "@/components/sections/cta";
-import { getSiteSettings } from "@/lib/settings";
-
-export const dynamic = "force-dynamic";
+import { about, stats } from "@/data/site";
+import { contact } from "@/data/contact";
 
 export const metadata: Metadata = {
   title: "About",
@@ -45,14 +44,7 @@ const values = [
   },
 ];
 
-function toNumber(value: string | undefined, fallback: number) {
-  const parsed = Number.parseInt((value ?? "").replace(/[^\d]/g, ""), 10);
-  return Number.isNaN(parsed) ? fallback : parsed;
-}
-
-export default async function AboutPage() {
-  const settings = await getSiteSettings();
-
+export default function AboutPage() {
   return (
     <>
       <PageHeader
@@ -72,13 +64,14 @@ export default async function AboutPage() {
           <Reveal>
             <div className="relative">
               <Cover
-                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1400&q=80"
+                src={about.image}
                 alt="The Astrix Mediyeah studio team collaborating"
                 className="aspect-[4/3] w-full rounded-3xl border border-white/10"
+                sizes="(min-width: 1024px) 50vw, 100vw"
               />
               <div className="absolute -bottom-6 -right-3 hidden rounded-2xl border border-white/10 bg-ink-soft/95 px-6 py-5 shadow-2xl backdrop-blur sm:block">
                 <p className="font-display text-3xl font-semibold text-white">
-                  {settings["stats.experience"]}
+                  {stats.experience}
                   <span className="text-neon-bright">+</span>
                 </p>
                 <p className="mt-1 text-[10px] uppercase tracking-[0.18em] text-zinc-500">
@@ -91,22 +84,22 @@ export default async function AboutPage() {
           <div>
             <SectionHeading
               eyebrow="Our story"
-              title={settings["about.title"]}
-              description={settings["about.story"]}
+              title={about.title}
+              description={about.story}
             />
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               <div className="rounded-2xl border border-white/[0.08] bg-white/[0.025] p-5">
                 <Rocket className="h-5 w-5 text-neon-bright" strokeWidth={1.6} />
                 <p className="mt-3 text-sm font-semibold text-white">Mission</p>
                 <p className="mt-2 text-[13px] leading-relaxed text-zinc-400">
-                  {settings["about.mission"]}
+                  {about.mission}
                 </p>
               </div>
               <div className="rounded-2xl border border-white/[0.08] bg-white/[0.025] p-5">
                 <Eye className="h-5 w-5 text-electric-bright" strokeWidth={1.6} />
                 <p className="mt-3 text-sm font-semibold text-white">Vision</p>
                 <p className="mt-2 text-[13px] leading-relaxed text-zinc-400">
-                  {settings["about.vision"]}
+                  {about.vision}
                 </p>
               </div>
             </div>
@@ -143,25 +136,18 @@ export default async function AboutPage() {
             <div className="mt-10 flex items-start gap-3 rounded-2xl border border-white/[0.07] bg-white/[0.02] p-5 text-sm text-zinc-400">
               <Compass className="mt-0.5 h-4 w-4 shrink-0 text-electric-bright" />
               <p>
-                Remote-first, headquartered in Bengaluru, working with partners
-                across Asia, Europe and North America. Same standards, every time
-                zone.
+                {contact.address}. Working with partners across Asia, Europe and
+                North America. Same standards, every time zone.
               </p>
             </div>
           </Reveal>
         </Container>
       </section>
 
-      <StatsBand
-        projects={toNumber(settings["stats.projects"], 180)}
-        clients={toNumber(settings["stats.clients"], 64)}
-        experience={toNumber(settings["stats.experience"], 9)}
-        satisfaction={toNumber(settings["stats.satisfaction"], 98)}
-      />
+      <StatsBand />
 
       <div className="mt-12">
         <CTASection
-          email={settings["contact.email"]}
           title="Want to work with a smaller, sharper team?"
           description="We take on a limited number of partnerships each quarter so senior attention stays real. Tell us what you're building."
         />

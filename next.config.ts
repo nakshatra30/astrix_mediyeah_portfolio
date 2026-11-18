@@ -14,23 +14,13 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   images: {
-    remotePatterns: [
-      { protocol: "https", hostname: "images.unsplash.com" },
-      { protocol: "https", hostname: "plus.unsplash.com" },
-    ],
+    formats: ["image/avif", "image/webp"],
   },
   async headers() {
     return [
       {
         source: "/:path*",
         headers: securityHeaders,
-      },
-      {
-        source: "/admin/:path*",
-        headers: [
-          { key: "X-Robots-Tag", value: "noindex, nofollow" },
-          { key: "Cache-Control", value: "no-store" },
-        ],
       },
     ];
   },

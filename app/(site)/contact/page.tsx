@@ -1,13 +1,18 @@
 import type { Metadata } from "next";
-import { Clock, Mail, MapPin, Phone } from "lucide-react";
+import {
+  Clock,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Phone,
+  type LucideIcon,
+} from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/ui/reveal";
 import { ContactForm } from "@/components/sections/contact-form";
-import { getPublicServices } from "@/lib/queries";
-import { getSiteSettings } from "@/lib/settings";
-
-export const dynamic = "force-dynamic";
+import { SERVICES } from "@/data/services";
+import { contact } from "@/data/contact";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -16,34 +21,44 @@ export const metadata: Metadata = {
   alternates: { canonical: "/contact" },
 };
 
-export default async function ContactPage() {
-  const [settings, services] = await Promise.all([
-    getSiteSettings(),
-    getPublicServices(),
-  ]);
+type ContactDetail = {
+  icon: LucideIcon;
+  label: string;
+  value: string;
+  href?: string;
+  external?: boolean;
+};
 
-  const details = [
+export default function ContactPage() {
+  const details: ContactDetail[] = [
     {
       icon: Mail,
       label: "Email",
-      value: settings["contact.email"],
-      href: `mailto:${settings["contact.email"]}`,
+      value: contact.email,
+      href: `mailto:${contact.email}`,
     },
     {
       icon: Phone,
       label: "Phone",
-      value: settings["contact.phone"],
-      href: `tel:${settings["contact.phone"].replace(/\s/g, "")}`,
+      value: contact.phone,
+      href: contact.phoneHref,
+    },
+    {
+      icon: MessageCircle,
+      label: "WhatsApp",
+      value: "Message us directly",
+      href: contact.whatsappHref,
+      external: true,
     },
     {
       icon: MapPin,
       label: "Studio",
-      value: settings["contact.address"],
+      value: contact.address,
     },
     {
       icon: Clock,
       label: "Hours",
-      value: settings["contact.hours"],
+      value: contact.hours,
     },
   ];
 
@@ -76,6 +91,8 @@ export default async function ContactPage() {
                   {detail.href ? (
                     <a
                       href={detail.href}
+                      target={detail.external ? "_blank" : undefined}
+                      rel={detail.external ? "noopener noreferrer" : undefined}
                       className="mt-1 block break-words text-sm text-zinc-200 transition-colors hover:text-white"
                     >
                       {detail.value}
@@ -114,30 +131,23 @@ export default async function ContactPage() {
 
           <Reveal delay={0.32}>
             <div className="flex flex-wrap gap-2 pt-1">
-              {[
-                { label: "Instagram", href: settings["social.instagram"] },
-                { label: "LinkedIn", href: settings["social.linkedin"] },
-                { label: "X", href: settings["social.twitter"] },
-                { label: "Behance", href: settings["social.behance"] },
-              ]
-                .filter((social) => social.href)
-                .map((social) => (
-                  <a
-                    key={social.label}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="rounded-full border border-white/10 px-3.5 py-1.5 text-[11px] text-zinc-400 transition-colors hover:border-white/25 hover:text-white"
-                  >
-                    {social.label}
-                  </a>
-                ))}
+              {contact.socials.map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full border border-white/10 px-3.5 py-1.5 text-[11px] text-zinc-400 transition-colors hover:border-white/25 hover:text-white"
+                >
+                  {social.label}
+                </a>
+              ))}
             </div>
           </Reveal>
         </div>
 
         <Reveal delay={0.12}>
-          <ContactForm services={services.map((service) => service.title)} />
+          <ContactForm services={SERVICES.map((service) => service.title)} />
         </Reveal>
       </Container>
     </>

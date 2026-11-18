@@ -4,7 +4,7 @@ import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { ProjectCard } from "@/components/ui/project-card";
 import { RevealGroup, RevealItem } from "@/components/ui/reveal";
-import type { PublicProject } from "@/types/content";
+import type { Project } from "@/types/content";
 
 export function FeaturedProjects({
   projects,
@@ -12,7 +12,7 @@ export function FeaturedProjects({
   title = "Proof, not promises.",
   description = "A few recent partnerships where strategy, design and engineering moved a real number.",
 }: {
-  projects: PublicProject[];
+  projects: Project[];
   eyebrow?: string;
   title?: string;
   description?: string;

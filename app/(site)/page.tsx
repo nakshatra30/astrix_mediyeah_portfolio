@@ -8,68 +8,29 @@ import { ProcessSection } from "@/components/sections/process-section";
 import { StatsBand } from "@/components/sections/stats-band";
 import { TestimonialsSection } from "@/components/sections/testimonials-section";
 import { CTASection } from "@/components/sections/cta";
-import { getSiteSettings } from "@/lib/settings";
-import {
-  getPublicProjects,
-  getPublicServices,
-  getPublishedTestimonials,
-} from "@/lib/queries";
+import { getFeaturedProjects } from "@/data/projects";
+import { SERVICES } from "@/data/services";
+import { TESTIMONIALS } from "@/data/testimonials";
+import { seo } from "@/data/site";
 
-export const dynamic = "force-dynamic";
+export const metadata: Metadata = {
+  title: { absolute: seo.title },
+  description: seo.description,
+  alternates: { canonical: "/" },
+};
 
-export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSiteSettings();
-  return {
-    title: settings["seo.title"],
-    description: settings["seo.description"],
-    alternates: { canonical: "/" },
-  };
-}
-
-function toNumber(value: string | undefined, fallback = 0) {
-  const parsed = Number.parseInt((value ?? "").replace(/[^\d]/g, ""), 10);
-  return Number.isNaN(parsed) ? fallback : parsed;
-}
-
-export default async function HomePage() {
-  const [settings, services, projects, testimonials] = await Promise.all([
-    getSiteSettings(),
-    getPublicServices(6),
-    getPublicProjects({ limit: 4 }),
-    getPublishedTestimonials(3),
-  ]);
-
+export default function HomePage() {
   return (
     <>
-      <Hero
-        settings={{
-          badge: settings["hero.badge"],
-          title: settings["hero.title"],
-          highlight: settings["hero.highlight"],
-          description: settings["hero.description"],
-          primaryCta: settings["hero.primaryCta"],
-          secondaryCta: settings["hero.secondaryCta"],
-          projects: toNumber(settings["stats.projects"], 180),
-          clients: toNumber(settings["stats.clients"], 64),
-          satisfaction: toNumber(settings["stats.satisfaction"], 98),
-        }}
-      />
+      <Hero />
       <LogoMarquee />
-      <ServicesOverview services={services} />
+      <ServicesOverview services={SERVICES} />
       <WhyChooseUs />
-      <FeaturedProjects projects={projects} />
-      <ProcessSection
-        title={settings["process.title"]}
-        subtitle={settings["process.subtitle"]}
-      />
-      <StatsBand
-        projects={toNumber(settings["stats.projects"], 180)}
-        clients={toNumber(settings["stats.clients"], 64)}
-        experience={toNumber(settings["stats.experience"], 9)}
-        satisfaction={toNumber(settings["stats.satisfaction"], 98)}
-      />
-      <TestimonialsSection testimonials={testimonials} />
-      <CTASection email={settings["contact.email"]} />
+      <FeaturedProjects projects={getFeaturedProjects(4)} />
+      <ProcessSection />
+      <StatsBand />
+      <TestimonialsSection testimonials={TESTIMONIALS} />
+      <CTASection />
     </>
   );
 }

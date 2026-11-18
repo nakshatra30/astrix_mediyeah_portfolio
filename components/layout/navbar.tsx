@@ -9,9 +9,10 @@ import { Logo } from "@/components/ui/logo";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { NAV_LINKS } from "@/lib/constants";
+import { site } from "@/data/site";
 import { cn } from "@/lib/utils";
 
-export function Navbar({ siteName }: { siteName: string }) {
+export function Navbar() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -50,9 +51,9 @@ export function Navbar({ siteName }: { siteName: string }) {
         <Link
           href="/"
           className="shrink-0 transition-opacity hover:opacity-90"
-          aria-label={`${siteName} home`}
+          aria-label={`${site.name} home`}
         >
-          <Logo name={siteName} />
+          <Logo name={site.name} />
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Main">

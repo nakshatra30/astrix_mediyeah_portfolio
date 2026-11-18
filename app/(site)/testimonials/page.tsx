@@ -5,10 +5,7 @@ import { TestimonialCard } from "@/components/ui/testimonial-card";
 import { RevealGroup, RevealItem } from "@/components/ui/reveal";
 import { StatsBand } from "@/components/sections/stats-band";
 import { CTASection } from "@/components/sections/cta";
-import { getPublishedTestimonials } from "@/lib/queries";
-import { getSiteSettings } from "@/lib/settings";
-
-export const dynamic = "force-dynamic";
+import { TESTIMONIALS } from "@/data/testimonials";
 
 export const metadata: Metadata = {
   title: "Testimonials",
@@ -17,17 +14,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/testimonials" },
 };
 
-function toNumber(value: string | undefined, fallback: number) {
-  const parsed = Number.parseInt((value ?? "").replace(/[^\d]/g, ""), 10);
-  return Number.isNaN(parsed) ? fallback : parsed;
-}
-
-export default async function TestimonialsPage() {
-  const [testimonials, settings] = await Promise.all([
-    getPublishedTestimonials(),
-    getSiteSettings(),
-  ]);
-
+export default function TestimonialsPage() {
   return (
     <>
       <PageHeader
@@ -43,9 +30,9 @@ export default async function TestimonialsPage() {
       />
 
       <Container>
-        {testimonials.length ? (
+        {TESTIMONIALS.length ? (
           <RevealGroup className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {testimonials.map((testimonial) => (
+            {TESTIMONIALS.map((testimonial) => (
               <RevealItem key={testimonial.id} className="h-full">
                 <TestimonialCard testimonial={testimonial} />
               </RevealItem>
@@ -60,17 +47,11 @@ export default async function TestimonialsPage() {
 
       <div className="section-pad">
         <Container>
-          <StatsBand
-            projects={toNumber(settings["stats.projects"], 180)}
-            clients={toNumber(settings["stats.clients"], 64)}
-            experience={toNumber(settings["stats.experience"], 9)}
-            satisfaction={toNumber(settings["stats.satisfaction"], 98)}
-          />
+          <StatsBand />
         </Container>
       </div>
 
       <CTASection
-        email={settings["contact.email"]}
         title="Want to be the next success story?"
         description="We'd love to hear what you're building. Bring the ambition — we'll bring the senior team to match it."
       />

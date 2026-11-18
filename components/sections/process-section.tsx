@@ -4,10 +4,11 @@ import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { RevealGroup, RevealItem } from "@/components/ui/reveal";
 import { PROCESS_STEPS } from "@/lib/constants";
+import { process } from "@/data/site";
 
 export function ProcessSection({
-  title = "A process with no black boxes",
-  subtitle = "Every engagement runs on the same rhythm: understand deeply, decide clearly, build beautifully, measure honestly.",
+  title = process.title,
+  subtitle = process.subtitle,
   showLink = true,
 }: {
   title?: string;

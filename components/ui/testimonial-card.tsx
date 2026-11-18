@@ -1,14 +1,14 @@
 import { Quote } from "lucide-react";
 import { Stars } from "@/components/ui/stars";
 import { Cover } from "@/components/ui/cover";
-import type { PublicTestimonial } from "@/types/content";
+import type { Testimonial } from "@/types/content";
 import { cn, getInitials } from "@/lib/utils";
 
 export function TestimonialCard({
   testimonial,
   className,
 }: {
-  testimonial: PublicTestimonial;
+  testimonial: Testimonial;
   className?: string;
 }) {
   return (
@@ -32,6 +32,7 @@ export function TestimonialCard({
             alt={testimonial.clientName}
             className="h-11 w-11 shrink-0 rounded-full"
             overlay={false}
+            sizes="44px"
           />
         ) : (
           <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/10 bg-gradient-to-br from-neon/25 to-electric/15 text-xs font-semibold text-white">

@@ -6,9 +6,6 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { RevealGroup, RevealItem } from "@/components/ui/reveal";
 import { ProcessSection } from "@/components/sections/process-section";
 import { CTASection } from "@/components/sections/cta";
-import { getSiteSettings } from "@/lib/settings";
-
-export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Process",
@@ -38,9 +35,7 @@ const principles = [
   },
 ];
 
-export default async function ProcessPage() {
-  const settings = await getSiteSettings();
-
+export default function ProcessPage() {
   return (
     <>
       <PageHeader
@@ -55,11 +50,7 @@ export default async function ProcessPage() {
         description="A repeatable rhythm refined across 180+ launches. It keeps projects fast, honest and genuinely collaborative from first call to post-launch growth."
       />
 
-      <ProcessSection
-        title={settings["process.title"]}
-        subtitle={settings["process.subtitle"]}
-        showLink={false}
-      />
+      <ProcessSection showLink={false} />
 
       <section className="border-t border-white/[0.06] py-16 sm:py-20">
         <Container>
@@ -119,7 +110,6 @@ export default async function ProcessPage() {
       </section>
 
       <CTASection
-        email={settings["contact.email"]}
         title="Ready to see the process up close?"
         description="Bring your toughest brief. We'll walk you through exactly how we'd tackle it, who'd be involved and what it would take."
       />

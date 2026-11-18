@@ -4,13 +4,13 @@ import { useMemo, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ProjectCard } from "@/components/ui/project-card";
 import { cn } from "@/lib/utils";
-import type { PublicProject } from "@/types/content";
+import type { Project } from "@/types/content";
 
 export function ProjectsGrid({
   projects,
   categories,
 }: {
-  projects: PublicProject[];
+  projects: Project[];
   categories: string[];
 }) {
   const [active, setActive] = useState("All");

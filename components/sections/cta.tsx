@@ -2,13 +2,12 @@ import { ArrowUpRight, Mail, Sparkles } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/ui/reveal";
+import { contact } from "@/data/contact";
 
 export function CTASection({
-  email = "hello@astrixmediyeah.com",
   title = "Let's build something they can't ignore.",
   description = "Tell us where you're headed. We'll reply within one working day with a clear next step — no pitch theatre.",
 }: {
-  email?: string;
   title?: string;
   description?: string;
 }) {
@@ -50,11 +49,11 @@ export function CTASection({
                   <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 </ButtonLink>
                 <a
-                  href={`mailto:${email}`}
+                  href={`mailto:${contact.email}`}
                   className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full border border-white/12 px-6 text-sm text-zinc-300 transition-colors hover:border-white/25 hover:text-white"
                 >
                   <Mail className="h-4 w-4" />
-                  {email}
+                  {contact.email}
                 </a>
                 <p className="mt-1 text-center text-[11px] text-zinc-600">
                   Currently booking 2 new partners for Q1

@@ -11,34 +11,42 @@ import { Cover } from "@/components/ui/cover";
 import { ProjectCard } from "@/components/ui/project-card";
 import { Reveal } from "@/components/ui/reveal";
 import { CTASection } from "@/components/sections/cta";
-import { getPublicProjects, getPublicServiceBySlug } from "@/lib/queries";
-import { getSiteSettings } from "@/lib/settings";
+import { SERVICES, getServiceBySlug } from "@/data/services";
+import { PROJECTS } from "@/data/projects";
 
-export const dynamic = "force-dynamic";
+export const dynamicParams = false;
 
 type PageProps = { params: Promise<{ slug: string }> };
 
+export function generateStaticParams() {
+  return SERVICES.map((service) => ({ slug: service.slug }));
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const service = await getPublicServiceBySlug(slug);
+  const service = getServiceBySlug(slug);
   if (!service) return { title: "Service not found" };
   return {
     title: service.title,
     description: service.shortDescription,
     alternates: { canonical: `/services/${service.slug}` },
+    openGraph: {
+      title: service.title,
+      description: service.shortDescription,
+      images: service.image ? [{ url: service.image }] : undefined,
+    },
   };
 }
 
 export default async function ServiceDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const [service, settings] = await Promise.all([
-    getPublicServiceBySlug(slug),
-    getSiteSettings(),
-  ]);
+  const service = getServiceBySlug(slug);
 
   if (!service) notFound();
 
-  const related = await getPublicProjects({ limit: 3 });
+  const related = PROJECTS.filter(
+    (project) => project.service?.slug === service.slug,
+  ).slice(0, 3);
 
   return (
     <>
@@ -109,9 +117,10 @@ export default async function ServiceDetailPage({ params }: PageProps) {
         <aside className="lg:sticky lg:top-28 lg:self-start">
           <div className="glass-card overflow-hidden">
             <Cover
-              src={service.imageUrl}
+              src={service.image}
               alt={service.title}
               className="aspect-[4/3]"
+              sizes="(min-width: 1024px) 33vw, 100vw"
             >
               <div className="absolute inset-0 flex items-center justify-center">
                 <span className="flex h-20 w-20 items-center justify-center rounded-3xl border border-white/15 bg-black/35 text-white backdrop-blur-md">
@@ -161,7 +170,7 @@ export default async function ServiceDetailPage({ params }: PageProps) {
         </section>
       ) : null}
 
-      <CTASection email={settings["contact.email"]} />
+      <CTASection />
     </>
   );
 }

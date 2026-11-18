@@ -1,32 +1,31 @@
 # Astrix Mediyeah
 
-A premium digital agency website and content management dashboard built as a
-single Next.js application.
+A premium, fully static digital agency portfolio built with Next.js 15, React 19
+and Tailwind CSS v4.
 
 ## Overview
 
-- **Public site** — home, about, services, service detail, projects, project
-  case studies, process, testimonials and contact.
-- **Admin dashboard** — authentication, overview metrics, services, projects,
-  testimonials, media library, enquiries pipeline, content editor and global
-  settings.
-- **Database** — PostgreSQL on Neon, accessed with Prisma.
-- **Design** — dark, editorial, motion-led design with Tailwind CSS v4,
-  Framer Motion and a shared UI primitive set.
+- **Public site** — home, about, services, service detail, projects, project case
+  studies, process, testimonials and contact.
+- **Content** — services, projects, testimonials, site copy and contact details
+  are plain TypeScript files in `data/`.
+- **Media** — all images live in `public/` and are served locally through
+  `next/image`. No database, CMS, admin panel or external media host is required.
+- **Contact** — the form opens the visitor's email client via `mailto:` and
+  offers a direct WhatsApp link. No submissions are stored.
+- **Design** — dark, editorial, motion-led design with Framer Motion and a shared
+  UI primitive set.
 
 ## Stack
 
-| Layer      | Technology                              |
-| ---------- | --------------------------------------- |
-| Framework  | Next.js 15 (App Router) + React 19      |
-| Language   | TypeScript                              |
-| Styling    | Tailwind CSS v4                         |
-| Animation  | Framer Motion                           |
-| Database   | Neon PostgreSQL + Prisma 6              |
-| Auth       | Signed JWT session cookie (`jose`)      |
-| Validation | Zod                                     |
-| Icons      | Lucide React                            |
-| Deployment | Vercel (recommended)                    |
+| Layer      | Technology                         |
+| ---------- | ---------------------------------- |
+| Framework  | Next.js 15 (App Router) + React 19 |
+| Language   | TypeScript                         |
+| Styling    | Tailwind CSS v4                    |
+| Animation  | Framer Motion                      |
+| Icons      | Lucide React                       |
+| Deployment | Vercel or any static/Node host     |
 
 ## Getting started
 
@@ -36,125 +35,97 @@ single Next.js application.
 npm install
 ```
 
-`postinstall` runs `prisma generate` automatically.
-
 ### 2. Configure environment
 
-Copy `.env.example` to `.env` and fill in the values.
+Copy `.env.example` to `.env`:
 
 ```bash
 cp .env.example .env
 ```
 
-| Variable              | Required | Purpose                                         |
-| --------------------- | -------- | ----------------------------------------------- |
-| `DATABASE_URL`        | Yes      | Neon pooled Postgres connection string          |
-| `AUTH_SECRET`         | Yes      | 32+ byte secret used to sign session cookies    |
-| `ADMIN_EMAIL`         | Seed     | First admin email, used only by `prisma/seed.ts` |
-| `ADMIN_PASSWORD`      | Seed     | First admin password, used only by the seed      |
-| `ADMIN_NAME`          | Seed     | First admin display name                         |
-| `NEXT_PUBLIC_SITE_URL`| Yes      | Canonical public URL, no trailing slash          |
+| Variable               | Required | Purpose                                |
+| ---------------------- | -------- | -------------------------------------- |
+| `NEXT_PUBLIC_SITE_URL` | Yes      | Canonical public URL, no trailing slash |
 
-Generate a secret with:
+For production, set it to `https://your-domain.com`.
 
-```bash
-node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
-```
-
-Use the **pooled** Neon connection string (host contains `-pooler`) for
-serverless deployments.
-
-### 3. Prepare the database
-
-```bash
-npm run db:deploy
-npm run db:seed
-```
-
-The seed is idempotent and requires `ADMIN_EMAIL` and an `ADMIN_PASSWORD` of at
-least 8 characters. It creates the first admin, six services, six projects, five
-testimonials, site settings, media records and sample enquiries.
-
-### 4. Run locally
+### 3. Run locally
 
 ```bash
 npm run dev
 ```
 
-- Public site: <http://localhost:3000>
-- Admin login: <http://localhost:3000/admin/login>
-
-Sign in with the `ADMIN_EMAIL` / `ADMIN_PASSWORD` from `.env`. There is no
-in-app password editor; to replace the seeded password, update the admin's
-bcrypt hash in the database as described in `docs/DEPLOYMENT.md`.
+Open <http://localhost:3000>.
 
 ## Scripts
 
-| Script             | Description                            |
-| ------------------ | -------------------------------------- |
-| `npm run dev`      | Start the development server (Turbopack) |
-| `npm run build`    | Generate Prisma client and build       |
-| `npm start`        | Run the production build               |
-| `npm run lint`     | Run ESLint                             |
-| `npm run typecheck`| Run TypeScript without emitting        |
-| `npm run db:deploy`| Apply committed migrations             |
-| `npm run db:migrate`| Create a migration during development |
-| `npm run db:push`  | Push schema directly (prototyping only) |
-| `npm run db:seed`  | Seed the database                      |
-| `npm run db:studio`| Open Prisma Studio                     |
+| Script              | Description                              |
+| ------------------- | ---------------------------------------- |
+| `npm run dev`       | Start the development server (Turbopack) |
+| `npm run build`     | Build the production site                |
+| `npm start`         | Run the production build                 |
+| `npm run lint`      | Run ESLint                               |
+| `npm run typecheck` | Run TypeScript without emitting          |
 
-## Content management
+## Editing content
 
-| Area        | What you can manage                                                   |
-| ----------- | --------------------------------------------------------------------- |
-| Services    | Copy, icon, features, price, cover image, order, featured/published   |
-| Projects    | Client, category, case study, gallery, outcomes, live URL, service    |
-| Testimonials| Client details, quote, rating, avatar, linked project                 |
-| Media       | Library of reusable image/document/video URLs                         |
-| Enquiries   | Contact submissions, status pipeline and internal notes               |
-| Content     | Hero, about, stats, process and SEO copy                              |
-| Settings    | Brand, contact details and social links                               |
+All content is local and typed.
 
-Media uploads are intentionally not bundled with a storage provider. Register
-hosted URLs in the Media library, or add S3 / Vercel Blob credentials and an
-upload route for binary uploads.
+| File                     | What it controls                                             |
+| ------------------------ | ------------------------------------------------------------ |
+| `data/site.ts`           | Brand, SEO, hero, stats, about copy and process intro         |
+| `data/projects.ts`       | Projects, galleries, outcomes, categories and related work   |
+| `data/services.ts`       | Services, features, pricing copy and cover images            |
+| `data/testimonials.ts`   | Client quotes, roles and avatars                             |
+| `data/contact.ts`        | Email, phone, WhatsApp, address, hours and social links      |
+| `lib/constants.ts`       | Navigation, budget options and process steps                 |
+| `types/content.ts`       | Shared content types                                         |
 
-## Security
+## Media
 
-- Admin routes are protected by middleware and re-verified in every admin API
-  route.
-- Passwords are hashed with bcrypt.
-- Sessions are signed HS256 JWTs in `httpOnly`, `sameSite=lax` cookies, `secure`
-  in production, with a 7-day expiry.
-- Login and contact submissions are rate-limited in memory.
-- All mutations validate input with Zod before touching the database.
-- Admin pages and API routes are excluded from indexing.
+Replace files in `public/images/` while keeping the same filenames, or update the
+paths in `data/`. Recommended formats are WebP or AVIF at sensible dimensions.
 
-For multi-instance deployments, replace the in-memory rate limiter in
-`lib/rate-limit.ts` with a shared store such as Upstash Redis.
+```text
+public/
+  icons/logo-mark.svg
+  images/
+    logo.png                 512 × 512
+    hero-banner.webp
+    about.webp
+    projects/
+      <project-slug>.webp
+      <project-slug>-gallery-1.webp
+  videos/
+    <project-slug>.mp4
+```
+
+To add project video, place an MP4 in `public/videos/` and set `videoUrl` on the
+project in `data/projects.ts`. Set `instagramReelUrl` to embed a public reel.
 
 ## Project structure
 
 ```text
 app/
-  (site)/              Public pages
-  admin/               Login and dashboard
-  api/                 Route handlers
+  (site)/              Public pages and dynamic project/service routes
+  layout.tsx           Root metadata, fonts and shell
+  sitemap.ts           Static sitemap generated from data files
+  robots.ts            Crawl rules
 components/
-  admin/               Dashboard UI and forms
   layout/              Navbar, footer, scroll progress
+  media/               Video and Instagram embed components
   sections/            Public page sections
   ui/                  Shared primitives
-lib/                   Prisma, auth, validation, settings, queries
-prisma/                Schema and seed
-types/                 Shared types
-middleware.ts          Admin route protection
+data/                  Typed site content
+lib/                   Utility helpers and navigation constants
+public/                All local images and video
+types/                 Content types
 ```
 
 ## Deployment
 
-See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) for the complete Vercel and
-GitHub deployment guide.
+See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) for the full Vercel deployment
+guide.
 
 ## Verification
 

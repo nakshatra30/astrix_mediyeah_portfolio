@@ -4,14 +4,14 @@ import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { TestimonialCard } from "@/components/ui/testimonial-card";
 import { RevealGroup, RevealItem } from "@/components/ui/reveal";
-import type { PublicTestimonial } from "@/types/content";
+import type { Testimonial } from "@/types/content";
 
 export function TestimonialsSection({
   testimonials,
   limit = 3,
   align = "center",
 }: {
-  testimonials: PublicTestimonial[];
+  testimonials: Testimonial[];
   limit?: number;
   align?: "center" | "left";
 }) {

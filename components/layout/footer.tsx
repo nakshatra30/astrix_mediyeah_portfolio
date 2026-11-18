@@ -3,21 +3,12 @@ import { ArrowUpRight, Mail, MapPin, Phone } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { Logo } from "@/components/ui/logo";
 import { NAV_LINKS } from "@/lib/constants";
-import { FALLBACK_SERVICES } from "@/lib/fallback";
+import { contact } from "@/data/contact";
+import { SERVICES } from "@/data/services";
+import { site } from "@/data/site";
 
-type FooterSettings = {
-  name: string;
-  description: string;
-  email: string;
-  phone: string;
-  address: string;
-  note: string;
-  socials: { label: string; href: string }[];
-};
-
-export function Footer({ settings }: { settings: FooterSettings }) {
+export function Footer() {
   const year = new Date().getFullYear();
-  const socials = settings.socials.filter((social) => social.href);
 
   return (
     <footer className="relative mt-8 overflow-hidden border-t border-white/[0.07] bg-ink-soft/50">
@@ -28,12 +19,12 @@ export function Footer({ settings }: { settings: FooterSettings }) {
       <Container className="relative py-16 lg:py-20">
         <div className="grid gap-12 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
           <div className="max-w-sm">
-            <Logo name={settings.name} />
+            <Logo name={site.name} />
             <p className="mt-5 text-sm leading-relaxed text-zinc-400">
-              {settings.description}
+              {site.description}
             </p>
             <p className="mt-6 text-[11px] uppercase tracking-[0.22em] text-zinc-600">
-              {settings.note}
+              {site.footerNote}
             </p>
           </div>
 
@@ -60,7 +51,7 @@ export function Footer({ settings }: { settings: FooterSettings }) {
               Services
             </h3>
             <ul className="mt-5 space-y-3">
-              {FALLBACK_SERVICES.map((service) => (
+              {SERVICES.map((service) => (
                 <li key={service.slug}>
                   <Link
                     href={`/services/${service.slug}`}
@@ -79,22 +70,22 @@ export function Footer({ settings }: { settings: FooterSettings }) {
             </h3>
             <div className="mt-5 space-y-3 text-sm text-zinc-400">
               <a
-                href={`mailto:${settings.email}`}
+                href={`mailto:${contact.email}`}
                 className="flex items-start gap-2.5 transition-colors hover:text-white"
               >
                 <Mail className="mt-0.5 h-4 w-4 shrink-0 text-neon-bright" />
-                {settings.email}
+                {contact.email}
               </a>
               <a
-                href={`tel:${settings.phone.replace(/\s/g, "")}`}
+                href={contact.phoneHref}
                 className="flex items-start gap-2.5 transition-colors hover:text-white"
               >
                 <Phone className="mt-0.5 h-4 w-4 shrink-0 text-neon-bright" />
-                {settings.phone}
+                {contact.phone}
               </a>
               <p className="flex items-start gap-2.5">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-neon-bright" />
-                {settings.address}
+                {contact.address}
               </p>
             </div>
             <Link
@@ -111,10 +102,10 @@ export function Footer({ settings }: { settings: FooterSettings }) {
 
         <div className="mt-7 flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-center">
           <p className="text-xs text-zinc-600">
-            © {year} {settings.name}. All rights reserved.
+            © {year} {site.name}. All rights reserved.
           </p>
           <div className="flex flex-wrap items-center gap-5">
-            {socials.map((social) => (
+            {contact.socials.map((social) => (
               <a
                 key={social.label}
                 href={social.href}
@@ -125,12 +116,6 @@ export function Footer({ settings }: { settings: FooterSettings }) {
                 {social.label}
               </a>
             ))}
-            <Link
-              href="/admin/login"
-              className="text-xs text-zinc-700 transition-colors hover:text-zinc-400"
-            >
-              Admin
-            </Link>
           </div>
         </div>
       </Container>

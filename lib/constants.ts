@@ -8,16 +8,6 @@ export const NAV_LINKS = [
   { label: "Contact", href: "/contact" },
 ];
 
-export const SERVICE_OPTIONS = [
-  "Digital Marketing",
-  "Social Media Management",
-  "Website Development",
-  "Branding & Graphic Design",
-  "SEO",
-  "Content Creation",
-  "Something else",
-];
-
 export const BUDGET_OPTIONS = [
   "Under $2,500",
   "$2,500 – $5,000",
@@ -25,22 +15,6 @@ export const BUDGET_OPTIONS = [
   "$10,000 – $25,000",
   "$25,000+",
   "Not sure yet",
-];
-
-export const ENQUIRY_STATUSES = [
-  "NEW",
-  "IN_PROGRESS",
-  "RESPONDED",
-  "CLOSED",
-] as const;
-
-export const PROJECT_CATEGORIES = [
-  "Branding",
-  "Web Development",
-  "Digital Marketing",
-  "Social Media",
-  "SEO",
-  "Content",
 ];
 
 export const PROCESS_STEPS = [
